@@ -15,6 +15,11 @@ def maFonction(a):
         else:
             msg = msg + ' <-- RESPONSE'
         print msg
+        
+def monFiltre(t,x):
+    return True
+    return x.haslayer(DNS)
+    
 
 filtre = sys.argv[1]
 a = sniff(count = 1000,lfilter = lambda x: x.haslayer(DNS),prn = maFonction)
