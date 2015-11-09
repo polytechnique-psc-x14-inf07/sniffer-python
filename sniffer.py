@@ -97,66 +97,66 @@ class snifferBot:
 			elif t == 18:
 				return 'Reponse masque de sous réseau'
 	def setProto(self,filtre):  #Argument demandant le protocole
-        if filtre != '-a':
-            self.TCP = 0
-            self.UDP = 0
-            self.ICMP = 0
-            self.ARP = 0
-            if 'tcp' in filtre:
-                self.TCP = 1
-            if 'udp' in filtre:
-                self.UDP = 1
-            if 'icmp' in filtre:
-                self.ICMP = 1
-            if 'arp' in filtre:
-                self.ARP = 1
-        else:
-            self.TCP = 1
-            self.UDP = 1
-            self.ICMP = 1
-            self.ARP = 1
-    def __init__(self,filtre,host):
-        self.TCP = 0
-        self.UDP = 0
-        self.ICMP = 0
-        self.ARP = 0
-        self.host = host
-        self.setProto(filtre)
-        self.run()
-    def run(self):
-        while 1:
-            infos = [] #On crée une variable info qui contiendra ip source/dst
-            a = sniff(count = 1)[0] #On récupere un paquet
-            isIP = self.returnIP(a) #On test si il est encapsulé IP
-            if isIP != 99: #Si c'est le cas, on récpere les informations
-                infos.append(a[IP].src)
-                infos.append(a[IP].dst)
-            else: #Sinon, on l'indique
-                infos.append(0)
-                infos.append(0)
-            if infos[0] == self.host or infos[1] == self.host or self.host == '-a': # filtre ip
-        		raw = self.returnRaw(a)
+		if filtre != '-a':
+			self.TCP = 0
+			self.UDP = 0
+			self.ICMP = 0
+			self.ARP = 0
+			if 'tcp' in filtre:
+				self.TCP = 1
+			if 'udp' in filtre:
+				self.UDP = 1
+			if 'icmp' in filtre:
+				self.ICMP = 1
+			if 'arp' in filtre:
+				self.ARP = 1
+		else:
+			self.TCP = 1
+			self.UDP = 1
+			self.ICMP = 1
+			self.ARP = 1
+	def __init__(self,filtre,host):
+		self.TCP = 0
+		self.UDP = 0
+		self.ICMP = 0
+		self.ARP = 0
+		self.host = host
+		self.setProto(filtre)
+		self.run()
+	def run(self):
+		while 1:
+			infos = [] #On crée une variable info qui contiendra ip source/dst
+			a = sniff(count = 1)[0] #On récupere un paquet
+			isIP = self.returnIP(a) #On test si il est encapsulé IP
+			if isIP != 99: #Si c'est le cas, on récpere les informations
+				infos.append(a[IP].src)
+				infos.append(a[IP].dst)
+			else: #Sinon, on l'indique
+				infos.append(0)
+				infos.append(0)
+			if infos[0] == self.host or infos[1] == self.host or self.host == '-a': # filtre ip
+				raw = self.returnRaw(a)
 				if self.isTCP(a) != 99 and self.TCP == 1: # filtre tcp
-                    msg = '[\033[31mTCP\033[00m]\033[34m '
-                    msg += infos[0] + '\033[00m:\033[35m' + str(a[TCP].sport) + '\033[00m -> \033[34m' + infos[1] + '\033[00m:\033[35m' + str(a[TCP].dport) + '\033[00m/ \033[31mflags\033[00m : \033[35m' + str(a[TCP].flags) + '\033[00m / \033[31mseq\033[00m = \033[35m' + str(a[TCP].seq) + '\033[00m\033[31m ack \033[00m= \033[35m' + str(a[TCP].ack) + '\033[00m'
-                    if raw != 99:
-                        msg += '/\033[31m Raw \033[00m:\033[01m ' + raw.load + '\033[00m'
-                        print msg
-            #si c'est udp
-                elif self.isUDP(a) != 99 and self.UDP == 1:
-                    msg = '[\033[31mUDP\033[00m]\033[34m '
-                    msg += infos[0] + '\033[00m:\033[35m' + str(a[UDP].sport) + '\033[00m -> \033[34m' + infos[1] + '\033[00m:\033[35m' + str(a[UDP].dport)
-                    if raw != 99:
-                        msg += '/\033[31m Raw \033[00m:\033[01m ' + raw.load + '\033[00m'
-                        print msg
-            #Si c'est ICMP
-                elif self.isICMP(a) != 99 and self.ICMP == 1:
-                    msg = '[\033[31mICMP\033[00m]\033[32m '
-                    msg += infos[0] + ' -> ' + infos[1] + '/'
-                    msg += 'type = ' + self.getICMPType(a) + '\033[00m'
-                    print msg
-            #Si c'est ARP
-                elif self.isARP(a) != 99 and self.ARP == 1:
-                    msg = '[\033[31mARP\033[00m] '
-                    msg += '\033[34m' + a[ARP].psrc + '\033[00m (\033[35m' + a[Ether].src + '\033[00m) -> \033[34m' + a[ARP].pdst + '\033[00m (\033[35m' + a[Ether].dst + '\033[00m) / Op = \033[01m' + self.getARPop(a) + '\033[00m'
-                    print msg
+					msg = '[\033[31mTCP\033[00m]\033[34m '
+					msg += infos[0] + '\033[00m:\033[35m' + str(a[TCP].sport) + '\033[00m -> \033[34m' + infos[1] + '\033[00m:\033[35m' + str(a[TCP].dport) + '\033[00m/ \033[31mflags\033[00m : \033[35m' + str(a[TCP].flags) + '\033[00m / \033[31mseq\033[00m = \033[35m' + str(a[TCP].seq) + '\033[00m\033[31m ack \033[00m= \033[35m' + str(a[TCP].ack) + '\033[00m'
+					if raw != 99:
+						msg += '/\033[31m Raw \033[00m:\033[01m ' + raw.load + '\033[00m'
+						print msg
+			#si c'est udp
+				elif self.isUDP(a) != 99 and self.UDP == 1:
+					msg = '[\033[31mUDP\033[00m]\033[34m '
+					msg += infos[0] + '\033[00m:\033[35m' + str(a[UDP].sport) + '\033[00m -> \033[34m' + infos[1] + '\033[00m:\033[35m' + str(a[UDP].dport)
+					if raw != 99:
+						msg += '/\033[31m Raw \033[00m:\033[01m ' + raw.load + '\033[00m'
+						print msg
+			#Si c'est ICMP
+				elif self.isICMP(a) != 99 and self.ICMP == 1:
+					msg = '[\033[31mICMP\033[00m]\033[32m '
+					msg += infos[0] + ' -> ' + infos[1] + '/'
+					msg += 'type = ' + self.getICMPType(a) + '\033[00m'
+					print msg
+			#Si c'est ARP
+				elif self.isARP(a) != 99 and self.ARP == 1:
+					msg = '[\033[31mARP\033[00m] '
+					msg += '\033[34m' + a[ARP].psrc + '\033[00m (\033[35m' + a[Ether].src + '\033[00m) -> \033[34m' + a[ARP].pdst + '\033[00m (\033[35m' + a[Ether].dst + '\033[00m) / Op = \033[01m' + self.getARPop(a) + '\033[00m'
+					print msg
