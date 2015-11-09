@@ -11,7 +11,7 @@ def maFonction(a):
     msg = str(i.val) + ': ' + a[IP].src + ' -> ' + a[IP].dst
     if (a[IP].src == filtre) or (a[IP].dst == filtre) or (filtre == '-a'):
         if (a[DNS].qr==0L):
-            msg = msg + ' <-- REQUEST for ' + a[DNS][0].qname
+            msg = msg + ' <-- REQUEST for ' + a[DNS].qd[0].qname
         else:
             msg = msg + ' <-- RESPONSE'
         print msg
