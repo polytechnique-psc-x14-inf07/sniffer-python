@@ -42,8 +42,8 @@ def maFonction(a):
 
         
 def monFiltre(x):
-    return (x.haslayer(DNS))# and (x[DNS].qr==0L)
+    return (x.haslayer(DNS)) and (x.haslayer(UDP))
     
 
 filtre = sys.argv[1]
-sniff(count = 1000,lfilter = monFiltre,prn = maFonction, timeout = 60)
+sniff(count = 1000,lfilter = monFiltre,prn = maFonction)
